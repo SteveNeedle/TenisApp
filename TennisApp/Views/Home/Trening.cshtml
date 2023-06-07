@@ -1,0 +1,104 @@
+﻿@model List<TennisApp.Models.Lesson>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" id="nameFilter" class="form-control" placeholder="Фильтр по имени">
+    </div>
+</div>
+
+<div style="height: 500px; overflow-y: scroll;">
+    <table class="table" id="lessonsTable">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Дата</th>
+                <th>Минуты тренировки</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lesson in Model)
+            {
+                <tr>
+                    <td>@lesson.Name</td>
+                    <td>@lesson.Surname</td>
+                    <td>@lesson.Date.ToShortDateString()</td>
+                    <td>@lesson.Time</td>
+                    <td>@lesson.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<form method="post" action="@Url.Action("AddLesson")" class="form">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="name">Имя:</label>
+                <input type="text" name="name" id="name" required class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="surname">Фамилия:</label>
+                <input type="text" name="surname" id="surname" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="date">Дата:</label>
+                <input type="date" name="date" id="date" required class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="time">Минуты тренировки:</label>
+                <input type="number" name="time" id="time" required class="form-control">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <input type="text" name="description" id="description" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary mt-3">Добавить</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#nameFilter').on('input', function () {
+            applyFilter();
+        });
+    });
+
+    function applyFilter() {
+        var filterValue = $('#nameFilter').val().toLowerCase();
+
+        $.ajax({
+            url: '/Home/FilterLessons',
+            type: 'GET',
+            data: { filter: filterValue },
+            success: function (data) {
+                $('#lessonsTable tbody').html(data);
+            }
+        });
+    }
+</script>
+
