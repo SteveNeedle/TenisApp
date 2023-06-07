@@ -6,8 +6,15 @@
     </div>
 </div>
 
-<div style="height: 500px; overflow-y: scroll;">
-    <table class="table" id="lessonsTable">
+<style>
+    .custom-table {
+        background-color: #FFFFFF;
+        border-radius: 5px;
+    }
+</style>
+
+<div style="height: 550px; overflow-y: scroll;">
+    <table class="table custom-table" id="lessonsTable">
         <thead>
             <tr>
                 <th>Имя</th>
@@ -32,52 +39,53 @@
     </table>
 </div>
 
+<div id="addLessonBlock" style="display: none;">
+    <form method="post" action="@Url.Action("AddLesson")" class="form">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="name">Имя:</label>
+                    <input type="text" name="name" id="name" required class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="surname">Фамилия:</label>
+                    <input type="text" name="surname" id="surname" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="date">Дата:</label>
+                    <input type="date" name="date" id="date" required class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="time">Минуты тренировки:</label>
+                    <input type="number" name="time" id="time" required class="form-control">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="description">Описание:</label>
+                    <input type="text" name="description" id="description" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-3">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
-
-
-<form method="post" action="@Url.Action("AddLesson")" class="form">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="name">Имя:</label>
-                <input type="text" name="name" id="name" required class="form-control">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="surname">Фамилия:</label>
-                <input type="text" name="surname" id="surname" class="form-control">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="date">Дата:</label>
-                <input type="date" name="date" id="date" required class="form-control">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="time">Минуты тренировки:</label>
-                <input type="number" name="time" id="time" required class="form-control">
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="form-group">
-                <label for="description">Описание:</label>
-                <input type="text" name="description" id="description" class="form-control">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary mt-3">Добавить</button>
-            </div>
-        </div>
-    </div>
-</form>
+<button id="toggleAddLessonBlock" class="btn btn-primary mt-3">Добавить занятие</button>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -85,6 +93,15 @@
     $(document).ready(function () {
         $('#nameFilter').on('input', function () {
             applyFilter();
+        });
+
+        $('#toggleAddLessonBlock').on('click', function () {
+            $('#addLessonBlock').toggle();
+            if ($('#addLessonBlock').is(':visible')) {
+                $(this).text('Скрыть');
+            } else {
+                $(this).text('Добавить занятие');
+            }
         });
     });
 
@@ -101,4 +118,3 @@
         });
     }
 </script>
-

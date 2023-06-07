@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -18,5 +18,16 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: #f5f5f5;
+    margin-bottom: 60px;
+}
+
+body {
+    font-size: 14px; /* Базовый размер шрифта */
+}
+
+@media (min-width: 768px) {
+    body {
+        font-size: 16px; /* Увеличивает размер шрифта на больших экранах */
+    }
 }

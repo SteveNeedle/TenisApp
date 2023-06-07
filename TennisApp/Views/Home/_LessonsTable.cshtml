@@ -2,11 +2,13 @@
 
 @foreach (var lesson in Model)
 {
-        <tr>
-            <td>@lesson.Name</td>
-            <td>@lesson.Surname</td>
-            <td>@lesson.Date.ToShortDateString()</td>
-            <td>@lesson.Time</td>
-            <td>@lesson.Description</td>
-        </tr>
+    <tr>
+        <td>@lesson.Name</td>
+        <td>@lesson.Surname</td>
+        <td>@lesson.Date.ToShortDateString()</td>
+        <td>@lesson.Time</td>
+        <td>@lesson.Description</td>
+    </tr>
+
 }
+
