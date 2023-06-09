@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Расписание тренировок";
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/css/site.css" />
+
+<style>
+    #calendar-container {
+        margin-top: 10px;
+    }
+
+    .rounded-calendar {
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .calendar-day {
+        border-radius: 50%;
+    }
+
+    .event-details {
+        display: none;
+        background-color: white;
+        padding: 10px;
+        border: 1px solid #ccc;
+        position: absolute;
+        z-index: 999;
+        width: 200px;
+        border-radius: 10px;
+        animation: fade-in 0.3s ease-in;
+    }
+
+    .calendar-day.clicked {
+        background-color: blue;
+        color: white;
+    }
+
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-2">
+                <h2 class="display-inline" id="current-month"></h2>
+                <button class="btn btn-primary prev-month">&lt;</button>
+                <button class="btn btn-primary next-month">&gt;</button>
+            </div>
+            <div id="calendar-container" class="rounded-calendar p-3"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var currentDate = new Date();
+        var currentMonth = currentDate.getMonth();
+        var currentYear = currentDate.getFullYear();
+        displayCalendar(currentMonth, currentYear);
+
+        $(".prev-month").click(function () {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            displayCalendar(currentMonth, currentYear);
+        });
+
+        $(".next-month").click(function () {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            displayCalendar(currentMonth, currentYear);
+        });
+
+        function displayCalendar(month, year) {
+            var monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+            var firstDay = new Date(year, month, 1);
+            var lastDay = new Date(year, month + 1, 0);
+            var html = '<table class="table table-bordered"><thead><tr><th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th></tr></thead><tbody>';
+
+            var date = 1;
+            var firstDayIndex = (firstDay.getDay() + 6) % 7; // Начало недели с понедельника
+            var lastDayDate = lastDay.getDate();
+
+            for (var i = 0; i < 6; i++) {
+                html += '<tr>';
+                for (var j = 0; j < 7; j++) {
+                    if (i === 0 && j < firstDayIndex) {
+                        html += '<td></td>';
+                    } else if (date > lastDayDate) {
+                        break;
+                    } else {
+                        html += '<td class="calendar-day">' + date + '</td>';
+                        date++;
+                    }
+                }
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+
+            $("#current-month").text(monthNames[month] + ' ' + year);
+            $("#calendar-container").html(html);
+        }
+
+        $(document).on('click', '.calendar-day', function () {
+            $('.calendar-day.clicked').removeClass('clicked');
+            $(this).addClass('clicked');
+
+            var day = $(this).text();
+            var month = $("#current-month").text().split(' ')[0];
+            var year = $("#current-month").text().split(' ')[1];
+            var eventDetails = '<ul><li>15:00 - 23:00</li><li>12:00 - 14:00</li><li>18:00 - 20:00</li><li>09:00 - 11:00</li><li>17:00 - 19:00</li></ul>';
+
+            $('.event-details').html(eventDetails);
+            $('.event-details').css({
+                'left': $(this).offset().left + 'px',
+                'top': $(this).offset().top + $(this).outerHeight() + 'px'
+            }).fadeIn(300);
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.calendar-day').length && !$(e.target).closest('.event-details').length) {
+                $('.event-details').fadeOut(300);
+            }
+        });
+
+        $(window).on('resize', function () {
+            $('.event-details').hide();
+        });
+    });
+</script>
+
+<div class="event-details"></div>

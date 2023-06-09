@@ -13,6 +13,22 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\WKU\\source\\repos\\TennisApp\\TennisApp\\wwwroot\\images\\f.png",
+      "PackagePath": "staticwebassets\\images\\f.png"
+    },
+    {
+      "Id": "C:\\Users\\WKU\\source\\repos\\TennisApp\\TennisApp\\wwwroot\\images\\i.png",
+      "PackagePath": "staticwebassets\\images\\i.png"
+    },
+    {
+      "Id": "C:\\Users\\WKU\\source\\repos\\TennisApp\\TennisApp\\wwwroot\\images\\t.png",
+      "PackagePath": "staticwebassets\\images\\t.png"
+    },
+    {
+      "Id": "C:\\Users\\WKU\\source\\repos\\TennisApp\\TennisApp\\wwwroot\\images\\tennis-ball.png",
+      "PackagePath": "staticwebassets\\images\\tennis-ball.png"
+    },
+    {
       "Id": "C:\\Users\\WKU\\source\\repos\\TennisApp\\TennisApp\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

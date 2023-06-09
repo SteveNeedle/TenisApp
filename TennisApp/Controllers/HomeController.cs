@@ -27,6 +27,11 @@ namespace TennisApp.Controllers
             return View();
         }
 
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
         public IActionResult Trening()
         {
             var lessons = _context.Lessons.ToList();
