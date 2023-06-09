@@ -10,6 +10,10 @@
         margin-top: 10px;
     }
 
+    .table thead th {
+        text-align: center; /* Добавлено свойство text-align: center; */
+    }
+
     .rounded-calendar {
         border-radius: 5px;
         overflow: hidden;
@@ -17,7 +21,21 @@
 
     .calendar-day {
         border-radius: 50%;
+        position: relative;
+        text-align: center;
+        /*font-weight: bold; /* Добавлено свойство font-weight: bold; */*/
     }
+
+        .calendar-day.clicked:before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 4px solid #3279FD;
+            border-radius: 8px;
+        }
 
     .event-details {
         display: none;
@@ -29,11 +47,6 @@
         width: 200px;
         border-radius: 10px;
         animation: fade-in 0.3s ease-in;
-    }
-
-    .calendar-day.clicked {
-        background-color: blue;
-        color: white;
     }
 
 </style>
@@ -53,6 +66,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -111,8 +125,12 @@
         }
 
         $(document).on('click', '.calendar-day', function () {
-            $('.calendar-day.clicked').removeClass('clicked');
-            $(this).addClass('clicked');
+            if ($(this).hasClass('clicked')) {
+                $(this).removeClass('clicked');
+            } else {
+                $('.calendar-day.clicked').removeClass('clicked');
+                $(this).addClass('clicked');
+            }
 
             var day = $(this).text();
             var month = $("#current-month").text().split(' ')[0];
@@ -128,6 +146,7 @@
 
         $(document).on('click', function (e) {
             if (!$(e.target).closest('.calendar-day').length && !$(e.target).closest('.event-details').length) {
+                $('.calendar-day.clicked').removeClass('clicked');
                 $('.event-details').fadeOut(300);
             }
         });
