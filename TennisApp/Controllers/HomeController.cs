@@ -17,6 +17,46 @@ namespace TennisApp.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        public IActionResult GetEventDetails(int day, string month, int year)
+        {
+            try
+            {
+                var eventDate = new DateTime(year, GetMonthNumber(month), day);
+                var events = _context.TrainingRecords.Where(r => r.Date == eventDate).ToList();
+
+                var eventDetails = events.Select(e => new { time = e.Time.ToString(@"hh\:mm"), name = e.Name });
+
+                return Json(eventDetails);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Ошибка при получении информации о событии.");
+            }
+        }
+
+        private int GetMonthNumber(string month)
+        {
+            // Преобразование названия месяца в числовой формат
+            switch (month.ToLower())
+            {
+                case "январь": return 1;
+                case "февраль": return 2;
+                case "март": return 3;
+                case "апрель": return 4;
+                case "май": return 5;
+                case "июнь": return 6;
+                case "июль": return 7;
+                case "август": return 8;
+                case "сентябрь": return 9;
+                case "октябрь": return 10;
+                case "ноябрь": return 11;
+                case "декабрь": return 12;
+                default: throw new ArgumentException("Некорректное название месяца.");
+            }
+        }
+
+
         public IActionResult Index()
         {
             return View();

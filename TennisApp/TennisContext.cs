@@ -15,5 +15,6 @@ namespace TennisApp.Data
         }
 
         public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<TrainingRecord> TrainingRecords { get; set; }
     }
 }

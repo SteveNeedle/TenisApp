@@ -2,7 +2,7 @@
     ViewData["Title"] = "Расписание тренировок";
 }
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="~/css/site.css" />
 
 <style>
@@ -11,7 +11,7 @@
     }
 
     .table thead th {
-        text-align: center; /* Добавлено свойство text-align: center; */
+        text-align: center;
     }
 
     .rounded-calendar {
@@ -23,7 +23,6 @@
         border-radius: 50%;
         position: relative;
         text-align: center;
-        /*font-weight: bold; /* Добавлено свойство font-weight: bold; */*/
     }
 
         .calendar-day.clicked:before {
@@ -38,7 +37,6 @@
         }
 
     .event-details {
-        display: none;
         background-color: white;
         padding: 10px;
         border: 1px solid #ccc;
@@ -49,6 +47,9 @@
         animation: fade-in 0.3s ease-in;
     }
 
+    .calendar-day.has-events {
+        font-weight: bold;
+    }
 </style>
 
 <div class="container">
@@ -64,18 +65,16 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
+<div class="event-details"></div>
 
 <script>
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         var currentDate = new Date();
         var currentMonth = currentDate.getMonth();
         var currentYear = currentDate.getFullYear();
         displayCalendar(currentMonth, currentYear);
 
-        $(".prev-month").click(function () {
+        document.querySelector('.prev-month').addEventListener('click', function () {
             currentMonth--;
             if (currentMonth < 0) {
                 currentMonth = 11;
@@ -84,7 +83,7 @@
             displayCalendar(currentMonth, currentYear);
         });
 
-        $(".next-month").click(function () {
+        document.querySelector('.next-month').addEventListener('click', function () {
             currentMonth++;
             if (currentMonth > 11) {
                 currentMonth = 0;
@@ -111,7 +110,8 @@
                     } else if (date > lastDayDate) {
                         break;
                     } else {
-                        html += '<td class="calendar-day">' + date + '</td>';
+                        var dayClass = hasEventsOnDay(date, month, year) ? ' has-events' : '';
+                        html += '<td class="calendar-day' + dayClass + '">' + date + '</td>';
                         date++;
                     }
                 }
@@ -120,41 +120,82 @@
 
             html += '</tbody></table>';
 
-            $("#current-month").text(monthNames[month] + ' ' + year);
-            $("#calendar-container").html(html);
+            document.getElementById('current-month').textContent = monthNames[month] + ' ' + year;
+            document.getElementById('calendar-container').innerHTML = html;
         }
 
-        $(document).on('click', '.calendar-day', function () {
-            if ($(this).hasClass('clicked')) {
-                $(this).removeClass('clicked');
-            } else {
-                $('.calendar-day.clicked').removeClass('clicked');
-                $(this).addClass('clicked');
+        function hasEventsOnDay(day, month, year, callback) {
+            // Создать AJAX-запрос для получения данных о тренировках на указанный день
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/Home/GetEventDetails?day=' + day + '&month=' + (month + 1) + '&year=' + year);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var result = JSON.parse(xhr.responseText);
+                    if (result.length > 0) {
+                        console.log('Есть тренировки на указанный день');
+                        callback(true);
+                    } else {
+                        console.log('Нет тренировок на указанный день');
+                        callback(false);
+                    }
+                } else {
+                    console.log('Ошибка при получении информации о тренировках');
+                    callback(false);
+                }
+            };
+            xhr.send();
+        }
+
+        document.addEventListener('click', function (event) {
+            var target = event.target;
+            if (target.classList.contains('calendar-day')) {
+                var calendarDays = document.querySelectorAll('.calendar-day');
+                calendarDays.forEach(function (day) {
+                    day.classList.remove('clicked');
+                });
+                target.classList.add('clicked');
+
+                var day = target.textContent;
+                var month = document.getElementById('current-month').textContent.split(' ')[0];
+                var year = document.getElementById('current-month').textContent.split(' ')[1];
+
+                // Send AJAX request to get event details
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/Home/GetEventDetails?day=' + day + '&month=' + month + '&year=' + year);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var result = JSON.parse(xhr.responseText);
+                        var eventDetails = '';
+                        if (result.length > 0) {
+                            eventDetails += '<ul>';
+                            result.forEach(function (item) {
+                                eventDetails += '<li>' + item.time + ' - ' + item.name + '</li>';
+                            });
+                            eventDetails += '</ul>';
+                        } else {
+                            eventDetails = 'Тренировок нет';
+                        }
+
+                        document.querySelector('.event-details').innerHTML = eventDetails;
+                        document.querySelector('.event-details').style.left = target.offsetLeft + 'px';
+                        document.querySelector('.event-details').style.top = target.offsetTop + target.offsetHeight + 'px';
+                        document.querySelector('.event-details').style.display = 'block';
+                    } else {
+                        alert('Ошибка при получении информации о событии.');
+                    }
+                };
+                xhr.send();
+            } else if (!target.closest('.event-details')) {
+                var calendarDays = document.querySelectorAll('.calendar-day');
+                calendarDays.forEach(function (day) {
+                    day.classList.remove('clicked');
+                });
+                document.querySelector('.event-details').style.display = 'none';
             }
-
-            var day = $(this).text();
-            var month = $("#current-month").text().split(' ')[0];
-            var year = $("#current-month").text().split(' ')[1];
-            var eventDetails = '<ul><li>15:00 - 23:00</li><li>12:00 - 14:00</li><li>18:00 - 20:00</li><li>09:00 - 11:00</li><li>17:00 - 19:00</li></ul>';
-
-            $('.event-details').html(eventDetails);
-            $('.event-details').css({
-                'left': $(this).offset().left + 'px',
-                'top': $(this).offset().top + $(this).outerHeight() + 'px'
-            }).fadeIn(300);
         });
 
-        $(document).on('click', function (e) {
-            if (!$(e.target).closest('.calendar-day').length && !$(e.target).closest('.event-details').length) {
-                $('.calendar-day.clicked').removeClass('clicked');
-                $('.event-details').fadeOut(300);
-            }
-        });
-
-        $(window).on('resize', function () {
-            $('.event-details').hide();
+        window.addEventListener('resize', function () {
+            document.querySelector('.event-details').style.display = 'none';
         });
     });
 </script>
-
-<div class="event-details"></div>
